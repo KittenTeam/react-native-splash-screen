@@ -5,6 +5,11 @@ import android.app.Dialog;
 
 import java.lang.ref.WeakReference;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.os.Build;
+import android.view.View;
+
 /**
  * SplashScreen
  * 启动屏
@@ -29,6 +34,28 @@ public class SplashScreen {
                 if (!activity.isFinishing()) {
                     mSplashDialog = new Dialog(activity, themeResId);
                     mSplashDialog.setContentView(R.layout.launch_screen);
+
+                    mSplashDialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                    mSplashDialog.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                        @Override
+                        public void onSystemUiVisibilityChange(int visibility) {
+                            int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                                    //布局位于状态栏下方
+                                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                                    //全屏
+                                    View.SYSTEM_UI_FLAG_FULLSCREEN |
+                                    //隐藏导航栏
+                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                            if (Build.VERSION.SDK_INT >= 19) {
+                                uiOptions |= 0x00001000;
+                            } else {
+                                uiOptions |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                            }
+                            mSplashDialog.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+                        }
+                    });
+
                     mSplashDialog.setCancelable(false);
 
                     if (!mSplashDialog.isShowing()) {
